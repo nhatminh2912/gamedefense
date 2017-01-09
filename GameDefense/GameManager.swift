@@ -28,12 +28,16 @@ class GameManager: NSObject{
     func addTowertoViewController(viewcontroller: GameViewController, fireSpeed: Double, dmg: Int, towerImage: String, x: CGFloat, y: CGFloat)
     {
         let tower = Tower(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        
+        viewcontroller.view.addSubview(tower)
+        
         tower.gameManager = self
+        
         tower.makeTower(fireSpeed: fireSpeed, dmg: dmg, towerImage: towerImage, x: x, y: y)
         
         self.allTowers.add(tower)
         
-        viewcontroller.view.addSubview(tower)
+        
         
     }
     
@@ -48,6 +52,14 @@ class GameManager: NSObject{
                 
                 if let currentTower = tower as? Tower
                 {
+                    if currentTower.frame.intersects((creep as! Creep).frame)
+                    {
+                        currentTower.removeFromSuperview()
+                        currentTower.towerRange.removeFromSuperview()
+                        allTowers.remove(currentTower)
+                        return
+                    }
+                
                    if currentTower.towerRange.frame.intersects((creep as! Creep).frame)
                    {
                         if currentTower.targetCreep == nil

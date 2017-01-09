@@ -37,7 +37,6 @@ class Tower: UIImageView {
         self.widthTower = Int(frame.width)
         self.heightTower = Int(frame.height)
         projectile = UIImageView(image: UIImage(named: "projectile"))
-        towerRange = UIImageView(image: UIImage(named: "towerRange"))
         self.gameManager = GameManager()
         super.init(frame: frame)
     }
@@ -52,9 +51,13 @@ class Tower: UIImageView {
         self.frame = CGRect(x: x, y: y, width: CGFloat(widthTower!), height: CGFloat(heightTower!))
         self.fireSpeed = fireSpeed
         self.dmg = dmg
-        projectile.frame = CGRect(x: x, y: y, width: 30, height: 30)
+        projectile.frame = CGRect(x: x + 20, y: y + 10, width: 15, height: 15)
         projectileCenter = projectile.center
-        towerRange.frame = CGRect(x: x, y: y, width: 100, height: 100)
+        
+        towerRange = UIImageView(image: UIImage(named: "towerRange"))
+        towerRange.frame = CGRect(x: x - 30, y: y - 30, width: 100, height: 100)
+        towerRange.alpha = 0.2
+        self.superview!.addSubview(towerRange)
     }
     
     func startFiring()
@@ -75,13 +78,14 @@ class Tower: UIImageView {
         
         
         UIView.animate(withDuration: fireSpeed!, animations: {
-
+            
             self.projectile.center = (self.targetCreep?.center)!
             
         }, completion: { (finished) in
-            self.damageCreep()
             self.projectile.alpha = 0.0
             self.projectile.center = self.projectileCenter
+            self.projectile.removeFromSuperview()
+            self.damageCreep()
             
         })
     }
@@ -98,6 +102,8 @@ class Tower: UIImageView {
             
             stopFiring()
             
+            self.projectile.removeFromSuperview()
+            
             self.gameManager.Creeps.remove(targetCreep!)
             
             targetCreep?.removeFromSuperview()
@@ -109,13 +115,13 @@ class Tower: UIImageView {
         else
         {
             targetCreep?.health! -= dmg!
-
+            
         }
         if targetCreep?.frame.intersects(towerRange.frame) == false
         {
-            targetCreep = nil
-            
             stopFiring()
+            
+            targetCreep = nil
         }
     }
     

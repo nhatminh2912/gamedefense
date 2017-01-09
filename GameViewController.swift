@@ -25,15 +25,22 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
     
     var tower1 = UIImageView()
     
+    var tower2 = UIImageView()
+    
+    var tower3 = UIImageView()
+    
+    var tower4 = UIImageView()
+    
+    var tower5 = UIImageView()
+    
     var towerCopies = UIImageView()
     
     var waypointLocations = NSMutableArray()
     
     var allTowers = NSMutableArray()
     
-    var towerTag: Int = 0
-    
     var imageCenter = CGPoint.zero
+    
     @IBOutlet var waypoints: [UILabel]!
     
     
@@ -41,7 +48,6 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLoad()
         self.navigationItem.hidesBackButton = true
         self.gameManager = GameManager()
-        makeButton()
     }
     
     
@@ -63,56 +69,37 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             (wplabel as AnyObject).removeFromSuperview()
         }
         
-        spawnTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(generateCreep), userInfo: nil, repeats: true)
+        spawnTimer = Timer.scheduledTimer(timeInterval: 1.5, target: self, selector: #selector(spawnCreep), userInfo: nil, repeats: true)
         moveTimer = Timer.scheduledTimer(timeInterval: 0.05, target: self.gameManager!, selector: Selector(("updateMove")), userInfo: nil, repeats: true)
-        
+        makeTowerImage()
     }
 
-    func generateCreep() // Add creep vào view cùng các chỉ số
+    func spawnCreep() // Add creep vào view cùng các chỉ số
     {
         self.gameManager?.addCreeptoViewController(viewcontroller: self, speed: 2, health: 10, imageName: "creep13", wps: waypointLocations)
     }
-    
-    
-    func makeButton()
-    {
-        let button = UIButton(type: .system)
-        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        button.setBackgroundImage(UIImage(named: "buildtools"), for: .normal)
-        button.addTarget(self, action: #selector(actionButton), for: .touchUpInside)
-        self.view.addSubview(button)
-    }
-    
     func makeTowerImage()
     {
         let rect = CGRect(x: 0, y: 0, width: 40, height: 40)
         let image = UIImage(named: "tower2")
-        tower1 = UIImageView(frame: rect)
-        tower1.image = image
-        tower1.tag = tag.tower1.rawValue
-        towerTag = tower1.tag
+        tower2 = UIImageView(frame: rect)
+        tower2.image = image
+        tower2.tag = tag.tower1.rawValue
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(panMove(_:)))
-        tower1.addGestureRecognizer(panGesture)
-        tower1.isUserInteractionEnabled = true
-        self.view.addSubview(tower1)
-    }
-    
-    func actionButton(sender: UIButton)
-    {
-        sender.isHidden = true
-        sender.isUserInteractionEnabled = false
-        makeTowerImage()
+        tower2.addGestureRecognizer(panGesture)
+        tower2.isUserInteractionEnabled = true
+        self.view.addSubview(tower2)
     }
     
     func panMove(_ panGesture : UIPanGestureRecognizer)
     {
-        
         let tagView = panGesture.view?.tag
         if let selectedImage = self.view.viewWithTag(tagView!) as? UIImageView
         {
             if panGesture.state == .began
             {
                 imageCenter = selectedImage.center
+                
             }
             else if panGesture.state == .changed
             {
@@ -120,13 +107,11 @@ class GameViewController: UIViewController, UIGestureRecognizerDelegate {
             }
             else
             {
-                self.gameManager?.addTowertoViewController(viewcontroller: self, fireSpeed: 0.5, dmg: 5, towerImage: "tower2", x: selectedImage.center.x - 20 , y: selectedImage.center.y - 20)
+                self.gameManager?.addTowertoViewController(viewcontroller: self, fireSpeed: 0.5, dmg: 5,towerImage: "tower2", x: selectedImage.center.x - 20 , y: selectedImage.center.y - 20)
                 selectedImage.center = imageCenter
             }
         }
     }
-    
-    
     
     
     
